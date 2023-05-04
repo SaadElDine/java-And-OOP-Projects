@@ -1,0 +1,1101 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package paintApplication;
+
+import javax.swing.JColorChooser;
+import javax.swing.JOptionPane;
+import java.awt.Color;
+import java.awt.Point;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+
+/**
+ *
+ * @author Saad
+ */
+public class Paint extends javax.swing.JFrame implements Node {
+
+    private Node parent;
+    private LineWindow line;
+    private CircleWindow circle;
+    private OvalWindow oval;
+    private RectangleWindow rectangle;
+    private SquareWindow square;
+    private TriangleWindow triangle;
+    private Text text;
+    private final Engine engine;
+    private boolean writen;
+    private int selectedIndex = -1;
+    private int nbOfTexts;
+    private int numberOfRectangles;
+    private int numberOfLines;
+    private int numberOfSquares;
+    private int numberOfOvals;
+    private int numberOfCircles;
+    private int numberOfTriangles;
+    int resizedIndex = -1;
+    
+    
+
+    /**
+     * Creates new form Paint
+     */
+    public Paint() {
+        initComponents();
+        engine = new Engine();
+        line = null;
+        circle = null;
+        oval = null;
+        rectangle = null;
+        triangle = null;
+        text = null;
+    }
+
+    @Override
+    public void setParentNode(Node node) {
+        this.parent = node;
+    }
+
+    @Override
+    public Node getParentNode() {
+        return this.parent;
+    }
+    
+    public boolean isNumeric(String str) {
+        for(int i=0; i<str.length(); i++) {
+            if (!(str.charAt(i) >='0' && str.charAt(i)<='9')) {
+                return false;
+            }
+        }
+        return true;
+    }
+   
+    public void copy() {
+        if (selectedIndex == -1) {
+            return;
+        }
+        else {
+            AbstractShapeClass shape = ((AbstractShapeClass)(engine.Shapes.get(selectedIndex)));
+            if(shape instanceof Rectangle) {
+                Rectangle r = (Rectangle) shape;
+                Rectangle copy = new Rectangle(r.getPosition(), r.getWidth(), r.getHeight());
+                copy.setColor(r.getColor());
+                copy.setFillColor(r.getFillColor());
+                String name = this.jComboBox1.getItemAt(selectedIndex);
+                String newName = name + "Copied";
+                this.engine.addShape(copy);
+                this.jComboBox1.addItem(newName);
+                this.engine.refresh(canvas1.getGraphics());
+            }
+            
+            else if (shape instanceof LineSegment) {
+                LineSegment r = (LineSegment) shape;
+                LineSegment copy = new LineSegment(r.getPosition(), r.getPoint2());
+                copy.setColor(r.getColor());
+                String name = this.jComboBox1.getItemAt(selectedIndex);
+                String newName = name + "Copied";
+                this.engine.addShape(copy);
+                this.jComboBox1.addItem(newName);
+                this.engine.refresh(canvas1.getGraphics());
+            }
+            
+            else if (shape instanceof Triangle) {
+                Triangle r = (Triangle) shape;
+                Triangle copy = new Triangle(r.getPosition(), r.getPoint2(),r.getPoint3());
+                copy.setColor(r.getColor());
+                copy.setFillColor(r.getFillColor());
+                String name = this.jComboBox1.getItemAt(selectedIndex);
+                String newName = name + "Copied";
+                this.engine.addShape(copy);
+                this.jComboBox1.addItem(newName);
+                this.engine.refresh(canvas1.getGraphics());
+            }
+            
+            else if (shape instanceof Circle) {
+                Circle r = (Circle) shape;
+                Circle copy = new Circle(r.getRadiusV(), r.getRadiusH(), r.getPosition());
+                copy.setColor(r.getColor());
+                copy.setFillColor(r.getFillColor());
+                String name = this.jComboBox1.getItemAt(selectedIndex);
+                String newName = name + "Copied";
+                this.engine.addShape(copy);
+                this.jComboBox1.addItem(newName);
+                this.engine.refresh(canvas1.getGraphics());
+            }
+        }
+    }
+ 
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        lineBtn = new javax.swing.JButton();
+        circleBtn = new javax.swing.JButton();
+        rectangleBtn = new javax.swing.JButton();
+        colorize = new javax.swing.JButton();
+        circleBtn1 = new javax.swing.JButton();
+        delete = new javax.swing.JButton();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        fillBtn = new javax.swing.JButton();
+        unfillBtn = new javax.swing.JButton();
+        showNamesbtn = new javax.swing.JButton();
+        hideBtn = new javax.swing.JButton();
+        clearBtn = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        canvas1 = new java.awt.Canvas();
+        jButton2 = new javax.swing.JButton();
+        copy = new javax.swing.JButton();
+        triangleBtn = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        savebtn = new javax.swing.JMenuItem();
+        loadbtn = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Paint Window");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lineBtn.setBackground(new java.awt.Color(255, 255, 255));
+        lineBtn.setFont(new java.awt.Font("Showcard Gothic", 3, 18)); // NOI18N
+        lineBtn.setForeground(new java.awt.Color(255, 255, 255));
+        lineBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/paintApplication/line.png"))); // NOI18N
+        lineBtn.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 255, 255)));
+        lineBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lineBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(lineBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 20, 40, 40));
+
+        circleBtn.setBackground(new java.awt.Color(255, 255, 255));
+        circleBtn.setFont(new java.awt.Font("Showcard Gothic", 3, 18)); // NOI18N
+        circleBtn.setForeground(new java.awt.Color(255, 255, 255));
+        circleBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/paintApplication/icons8-filled-circle-30.png"))); // NOI18N
+        circleBtn.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 255, 255)));
+        circleBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                circleBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(circleBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 20, 40, 40));
+
+        rectangleBtn.setBackground(new java.awt.Color(255, 255, 255));
+        rectangleBtn.setFont(new java.awt.Font("Showcard Gothic", 3, 18)); // NOI18N
+        rectangleBtn.setForeground(new java.awt.Color(255, 255, 255));
+        rectangleBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/paintApplication/rec.png"))); // NOI18N
+        rectangleBtn.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 255, 255)));
+        rectangleBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rectangleBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(rectangleBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 20, 40, 40));
+
+        colorize.setBackground(new java.awt.Color(255, 255, 255));
+        colorize.setFont(new java.awt.Font("Showcard Gothic", 3, 24)); // NOI18N
+        colorize.setForeground(new java.awt.Color(0, 0, 0));
+        colorize.setText("Colorize");
+        colorize.setBorder(new javax.swing.border.MatteBorder(null));
+        colorize.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                colorizeActionPerformed(evt);
+            }
+        });
+        getContentPane().add(colorize, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 180, 80));
+
+        circleBtn1.setBackground(new java.awt.Color(255, 255, 255));
+        circleBtn1.setFont(new java.awt.Font("Showcard Gothic", 3, 18)); // NOI18N
+        circleBtn1.setForeground(new java.awt.Color(255, 255, 255));
+        circleBtn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/paintApplication/icons8-ellipse-30.png"))); // NOI18N
+        circleBtn1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 255, 255)));
+        circleBtn1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                circleBtn1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(circleBtn1, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 20, 40, 40));
+
+        delete.setBackground(new java.awt.Color(255, 255, 255));
+        delete.setFont(new java.awt.Font("Showcard Gothic", 3, 24)); // NOI18N
+        delete.setForeground(new java.awt.Color(0, 0, 0));
+        delete.setText("Delete");
+        delete.setBorder(new javax.swing.border.MatteBorder(null));
+        delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteActionPerformed(evt);
+            }
+        });
+        getContentPane().add(delete, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 410, 180, 70));
+
+        jComboBox1.setBackground(new java.awt.Color(255, 255, 255));
+        jComboBox1.setFont(new java.awt.Font("Segoe Print", 3, 18)); // NOI18N
+        jComboBox1.setForeground(new java.awt.Color(0, 0, 0));
+        jComboBox1.setBorder(new javax.swing.border.MatteBorder(null));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 180, 70));
+
+        fillBtn.setBackground(new java.awt.Color(255, 255, 255));
+        fillBtn.setFont(new java.awt.Font("Showcard Gothic", 3, 24)); // NOI18N
+        fillBtn.setForeground(new java.awt.Color(0, 0, 0));
+        fillBtn.setText("Fill Shape");
+        fillBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fillBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(fillBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 180, 80));
+
+        unfillBtn.setBackground(new java.awt.Color(255, 255, 255));
+        unfillBtn.setFont(new java.awt.Font("Showcard Gothic", 3, 24)); // NOI18N
+        unfillBtn.setForeground(new java.awt.Color(0, 0, 0));
+        unfillBtn.setText("Unfill ");
+        unfillBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                unfillBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(unfillBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 310, 180, 80));
+
+        showNamesbtn.setBackground(new java.awt.Color(255, 255, 255));
+        showNamesbtn.setFont(new java.awt.Font("Showcard Gothic", 3, 18)); // NOI18N
+        showNamesbtn.setForeground(new java.awt.Color(0, 0, 0));
+        showNamesbtn.setText("Show Name");
+        showNamesbtn.setBorder(new javax.swing.border.MatteBorder(null));
+        showNamesbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showNamesbtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(showNamesbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 20, 160, 40));
+
+        hideBtn.setBackground(new java.awt.Color(255, 255, 255));
+        hideBtn.setFont(new java.awt.Font("Showcard Gothic", 3, 18)); // NOI18N
+        hideBtn.setForeground(new java.awt.Color(0, 0, 0));
+        hideBtn.setText("Hide Text");
+        hideBtn.setBorder(new javax.swing.border.MatteBorder(null));
+        hideBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hideBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(hideBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 20, 160, 40));
+
+        clearBtn.setBackground(new java.awt.Color(255, 255, 255));
+        clearBtn.setFont(new java.awt.Font("Showcard Gothic", 3, 18)); // NOI18N
+        clearBtn.setForeground(new java.awt.Color(0, 0, 0));
+        clearBtn.setText("Clear  Board");
+        clearBtn.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(255, 204, 102), new java.awt.Color(255, 204, 102), java.awt.Color.white, java.awt.Color.white));
+        clearBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(clearBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 530, 150, 40));
+
+        jButton1.setBackground(new java.awt.Color(255, 255, 255));
+        jButton1.setFont(new java.awt.Font("Showcard Gothic", 3, 18)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/paintApplication/icons8-square-full-30.png"))); // NOI18N
+        jButton1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 20, 40, 40));
+
+        canvas1.setBackground(new java.awt.Color(255, 255, 255));
+        canvas1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                canvas1MousePressed(evt);
+            }
+        });
+        canvas1.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                canvas1MouseDragged(evt);
+            }
+        });
+        getContentPane().add(canvas1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 80, 830, 490));
+
+        jButton2.setBackground(new java.awt.Color(255, 255, 255));
+        jButton2.setFont(new java.awt.Font("Showcard Gothic", 0, 18)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/paintApplication/icons8-add-text-30.png"))); // NOI18N
+        jButton2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 20, 50, 40));
+
+        copy.setBackground(new java.awt.Color(255, 255, 255));
+        copy.setFont(new java.awt.Font("Showcard Gothic", 3, 24)); // NOI18N
+        copy.setForeground(new java.awt.Color(0, 0, 0));
+        copy.setText("Copy");
+        copy.setBorder(new javax.swing.border.MatteBorder(null));
+        copy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyActionPerformed(evt);
+            }
+        });
+        getContentPane().add(copy, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 500, 180, 70));
+
+        triangleBtn.setBackground(new java.awt.Color(255, 255, 255));
+        triangleBtn.setFont(new java.awt.Font("Showcard Gothic", 3, 18)); // NOI18N
+        triangleBtn.setForeground(new java.awt.Color(255, 255, 255));
+        triangleBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/paintApplication/triii.png"))); // NOI18N
+        triangleBtn.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 255, 255)));
+        triangleBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                triangleBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(triangleBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 20, 40, 40));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/paintApplication/paint4.png"))); // NOI18N
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1070, 620));
+
+        jMenuBar1.setForeground(new java.awt.Color(255, 255, 255));
+        jMenuBar1.setOpaque(true);
+
+        jMenu1.setBackground(new java.awt.Color(102, 102, 102));
+        jMenu1.setText("File");
+
+        savebtn.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        savebtn.setText("Save To File");
+        savebtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                savebtnActionPerformed(evt);
+            }
+        });
+        jMenu1.add(savebtn);
+
+        loadbtn.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        loadbtn.setText("Load From File");
+        loadbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadbtnActionPerformed(evt);
+            }
+        });
+        jMenu1.add(loadbtn);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Edit");
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
+
+        setSize(new java.awt.Dimension(1081, 629));
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void lineBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineBtnActionPerformed
+        // TODO add your handling code here:
+
+        if (line == null) {
+            line = new LineWindow(this.canvas1, this.jComboBox1, this.engine);
+            line.setParentNode(this);
+        }
+
+        line.setVisible(true);
+    }//GEN-LAST:event_lineBtnActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteActionPerformed
+        // TODO add your handling code here:
+        if (engine.Shapes.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Your Board Is Still Empty, There is nothing to delete!");
+            return;
+        }
+        if (jComboBox1.getSelectedIndex() == -1)
+        {
+            JOptionPane.showMessageDialog(null, "Please Select The Item You'd Like To Delete And Try Again!");
+            return;
+        }
+        else
+        {
+            int k = jComboBox1.getSelectedIndex();
+            Shape shape = engine.Shapes.get(k);
+            jComboBox1.removeItemAt(k);
+            engine.Shapes.remove(shape);
+            engine.refresh(canvas1.getGraphics());
+        }
+        
+    }//GEN-LAST:event_deleteActionPerformed
+
+    private void clearBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearBtnActionPerformed
+        // TODO add your handling code here:
+        if (engine.Shapes.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Your Board Is Still Empty, There is nothing to Clear!");
+            return;
+        }
+        canvas1.repaint();
+    }//GEN-LAST:event_clearBtnActionPerformed
+
+    private void circleBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_circleBtnActionPerformed
+        // TODO add your handling code here:
+        
+        if (circle == null) {
+            circle = new CircleWindow(this.canvas1, this.jComboBox1, this.engine);
+            circle.setParentNode(this);
+        }
+
+        circle.setVisible(true);
+    }//GEN-LAST:event_circleBtnActionPerformed
+
+    private void rectangleBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rectangleBtnActionPerformed
+        // TODO add your handling code here:
+        
+        if (rectangle == null) {
+            rectangle = new RectangleWindow(this.canvas1, this.jComboBox1, this.engine);
+            rectangle.setParentNode(this);
+        }
+
+        rectangle.setVisible(true);
+    }//GEN-LAST:event_rectangleBtnActionPerformed
+
+    private void colorizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorizeActionPerformed
+        // TODO add your handling code here:
+        if (engine.Shapes.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "Your Board Is Still Empty, There is nothing to Colorize!");
+            return;
+        }
+        if (jComboBox1.getSelectedIndex() == -1)
+        {
+            JOptionPane.showMessageDialog(null, "Please Select The Item You'd Like To Colorize And Try Again!");
+            return;
+        }
+        else
+        {
+        int k = jComboBox1.getSelectedIndex();
+        Shape shape = engine.Shapes.get(k);
+        Color color = JColorChooser.showDialog(null, "Enter Color :", Color.yellow);
+        if(color != null){
+            shape.setColor(color);
+        }
+        engine.refresh(canvas1.getGraphics());
+        }
+    }//GEN-LAST:event_colorizeActionPerformed
+
+    private void fillBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fillBtnActionPerformed
+        // TODO add your handling code here:
+        if (engine.Shapes.isEmpty() )
+        {
+            JOptionPane.showMessageDialog(null, "Your Board Is Still Empty, There is nothing to Fill!");
+            return;
+        }
+        if (jComboBox1.getSelectedIndex() == -1)
+        {
+            JOptionPane.showMessageDialog(null, "Please Select The Item You'd Like To Fill And Try Again!");
+            return;
+        }
+        else
+        {
+        int k = jComboBox1.getSelectedIndex();
+        Shape shape = engine.Shapes.get(k);
+        
+        if(shape instanceof LineSegment) {
+            JOptionPane.showMessageDialog(null, "Sorry, you can't fill a line!");
+            return;
+        }
+        
+        Color color = JColorChooser.showDialog(null, "Enter Color :", Color.yellow);
+        if(color != null){
+            shape.setFillColor(color);
+        }
+        
+        engine.refresh(canvas1.getGraphics());
+        }
+    }//GEN-LAST:event_fillBtnActionPerformed
+
+    private void unfillBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unfillBtnActionPerformed
+        // TODO add your handling code here:
+        if (engine.Shapes.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "Your Board Is Still Empty, There is nothing to Unfill!");
+            return;
+        }
+        if (jComboBox1.getSelectedIndex() == -1)
+        {
+            JOptionPane.showMessageDialog(null, "Please Select The Item You'd Like To Unfill And Try Again!");
+            return;
+        }
+        else
+        {
+        int k = jComboBox1.getSelectedIndex();
+        Shape shape = engine.Shapes.get(k);
+        
+        if(shape instanceof LineSegment) {
+            JOptionPane.showMessageDialog(null, "Sorry, you can't unfill a line!");
+            return;
+        }
+        
+        shape.setFillColor(null);
+        engine.refresh(canvas1.getGraphics());
+        }
+    }//GEN-LAST:event_unfillBtnActionPerformed
+
+    private void showNamesbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showNamesbtnActionPerformed
+        // TODO add your handling code here:
+        if (engine.Shapes.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Your Board Is Still Empty!");
+            return;
+        }
+        if (jComboBox1.getSelectedIndex() == -1)
+        {
+            JOptionPane.showMessageDialog(null, "Please Select The Item You'd Like To Show Its Name And Try Again!");
+            return;
+        }
+        else
+        {
+        int k = this.jComboBox1.getSelectedIndex();
+        Shape shape = engine.Shapes.get(k);
+        String x = String.valueOf(this.jComboBox1.getSelectedItem());
+        canvas1.getGraphics().drawString(x, shape.getPosition().x, shape.getPosition().y);
+        }
+    }//GEN-LAST:event_showNamesbtnActionPerformed
+
+    private void hideBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideBtnActionPerformed
+        // TODO add your handling code here:
+        if (engine.Shapes.isEmpty() && writen == false) {
+            JOptionPane.showMessageDialog(null, "Your Board Is Still Empty!");
+            return;
+        }
+        engine.refresh(canvas1.getGraphics());
+        writen = false;
+    }//GEN-LAST:event_hideBtnActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+                
+        if (square == null) {
+            square = new SquareWindow(this.canvas1, this.jComboBox1, this.engine);
+            square.setParentNode(this);
+        }
+
+        square.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        String xA;
+        
+        do {
+            xA = JOptionPane.showInputDialog(null, "Enter X Coordinate Of The Location :");
+            if (xA == null) {
+                return;
+            }
+        } while (xA.equals("") || !isNumeric(xA));
+        int x1 = Integer.parseInt(xA);
+
+        do {
+            xA = JOptionPane.showInputDialog(null, "Enter Y Coordinate Of The Location :");
+            if (xA == null) {
+                return;
+            }
+        } while (xA.equals("") || !isNumeric(xA));
+        int y1 = Integer.parseInt(xA);
+        
+        do {
+            xA = JOptionPane.showInputDialog(null, "Enter Your Text :");
+            if (xA == null) {
+                return;
+            }
+        } while (xA.equals(""));
+        
+        text = new Text(new Point(x1,y1), xA);
+        this.engine.addShape(text);
+        this.engine.refresh(canvas1.getGraphics());
+        String textName = "text" + this.nbOfTexts;
+        this.jComboBox1.addItem(textName);
+        this.nbOfTexts++;
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void triangleBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_triangleBtnActionPerformed
+        // TODO add your handling code here:
+        if (triangle == null) {
+            triangle = new TriangleWindow(this.canvas1, this.jComboBox1, this.engine);
+            triangle.setParentNode(this);
+        }
+
+        triangle.setVisible(true);
+    }//GEN-LAST:event_triangleBtnActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        Home home = (Home) this.getParentNode();
+        this.setVisible(false);
+        home.setVisible(true);
+    }//GEN-LAST:event_formWindowClosing
+
+    private void canvas1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvas1MousePressed
+        // TODO add your handling code here:
+        Point p = evt.getPoint();
+        if (selectedIndex != -1) {
+            Shape s = engine.Shapes.get(selectedIndex);
+            if (s instanceof LineSegment) {
+                LineSegment l = (LineSegment) s;
+                if (l.containsB(p)) {
+                    l.setDraggingPoint(p);
+                    resizedIndex = selectedIndex;
+                    return;
+                }
+            }
+            else if (s instanceof Triangle) {
+                Triangle t = (Triangle) s;
+                if (t.containsB(p)) {
+                    t.setDraggingPoint(p);
+                    resizedIndex = selectedIndex;
+                    return;
+                }
+            }
+            else if (s instanceof Rectangle) {
+                Rectangle t = (Rectangle) s;
+                if (t.containsB(p)) {
+                    t.setDraggingPoint(p);
+                    resizedIndex = selectedIndex;
+                    return;
+                }
+            }
+            else if (s instanceof Circle) {
+                Circle c = (Circle) s;
+                if (c.containsB(p)) {
+                    c.setDraggingPoint(p);
+                    resizedIndex = selectedIndex;
+                    return;
+                }
+            }
+            
+        }
+        resizedIndex = -1;
+        for (int i = engine.Shapes.size() - 1; i >= 0; i--) {
+            if (((AbstractShapeClass)(engine.Shapes.get(i))).contains(p)) {
+                selectedIndex = i;
+                jComboBox1.setSelectedIndex(i);
+                ((AbstractShapeClass)(engine.Shapes.get(i))).setDraggingPoint(p);
+                ((AbstractShapeClass)(engine.Shapes.get(i))).setSelected(true);
+                engine.refresh(canvas1.getGraphics());
+                return;
+            }
+            ((AbstractShapeClass)(engine.Shapes.get(i))).setSelected(false);
+           engine.refresh(canvas1.getGraphics());
+        }
+        selectedIndex = -1;
+        jComboBox1.setSelectedIndex(-1);      
+    }//GEN-LAST:event_canvas1MousePressed
+
+    private void canvas1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvas1MouseDragged
+        // TODO add your handling code here:
+        Point p = evt.getPoint();
+        if (resizedIndex != -1) {
+            ((AbstractShapeClass) engine.Shapes.get(resizedIndex)).resize(p);
+            ((AbstractShapeClass) engine.Shapes.get(resizedIndex)).setDraggingPoint(p);
+            engine.refresh(canvas1.getGraphics());
+        }
+            
+        else if (selectedIndex != -1) {
+            ((AbstractShapeClass)(engine.Shapes.get(selectedIndex))).moveTo(p);
+            ((AbstractShapeClass)(engine.Shapes.get(selectedIndex))).setDraggingPoint(p);
+            engine.refresh(canvas1.getGraphics());
+        }
+        
+    }//GEN-LAST:event_canvas1MouseDragged
+
+    private void savebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_savebtnActionPerformed
+        // TODO add your handling code here:
+        System.out.println("Save");
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Specify a file to save");
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        FileFilter filter = new FileNameExtensionFilter("json file", new String[]{"json"});
+        fileChooser.setFileFilter(filter);
+        int userSelection = fileChooser.showSaveDialog(this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            try {
+                File fileToSave = fileChooser.getSelectedFile();
+                System.out.println("Save as file: " + fileToSave.getAbsolutePath());
+                save(fileToSave.getAbsolutePath());
+            } catch (FileNotFoundException ex) {
+                System.out.println("Error Opening File!");
+            }
+        }
+    }//GEN-LAST:event_savebtnActionPerformed
+
+    public void save(String filename) throws FileNotFoundException {
+        JSONArray x = new JSONArray();
+        int n = ((this.engine).Shapes).size();
+        for (int i = 0; i<n;i++) {
+            JSONObject obj = new JSONObject();
+            Shape shape = ((this.engine).Shapes).get(i);
+            if (shape instanceof Rectangle) {
+                Rectangle r = (Rectangle) shape;
+                obj.put("shapetype", "rectangle");
+                obj.put("x", (int)r.getPosition().x);
+                obj.put("y", (int)r.getPosition().y);
+                obj.put("width",(int) r.getWidth());
+                obj.put("height", (int)r.getHeight());
+                if(r.getColor() != null) {
+                    obj.put("rc", r.getColor().getRed());
+                    obj.put("gc", r.getColor().getGreen());
+                    obj.put("bc", r.getColor().getBlue());
+                }
+                if(r.getFillColor() != null) {
+                    obj.put("rf", r.getFillColor().getRed());
+                    obj.put("gf", r.getFillColor().getGreen());
+                    obj.put("bf", r.getFillColor().getBlue());
+                }
+                else {
+                    obj.put("rf", 1000);
+                    obj.put("gf", 1000);
+                    obj.put("bf", 1000);
+                }
+            
+            } else if (shape instanceof LineSegment) {
+                LineSegment l = (LineSegment) shape;
+                obj.put("shapetype", "line");
+                obj.put("x1",(int) l.getPosition().x);
+                obj.put("y1",(int) l.getPosition().y);
+                obj.put("x2",(int) l.getPoint2().x);
+                obj.put("y2", (int)l.getPoint2().y);
+                if(l.getColor() != null) {
+                    obj.put("rc", l.getColor().getRed());
+                    obj.put("gc", l.getColor().getGreen());
+                    obj.put("bc", l.getColor().getBlue());
+                }
+            }
+            else if (shape instanceof Circle) {
+                Circle c = (Circle) shape;
+                obj.put("shapetype", "circle");
+                obj.put("x", (int) c.getPosition().getX());
+                obj.put("y", (int) c.getPosition().getY());
+                obj.put("raduish", (int) c.getRadiusH());
+                obj.put("raduisv", (int) c.getRadiusV());
+                if(c.getColor() != null) {
+                    obj.put("rc", c.getColor().getRed());
+                    obj.put("gc", c.getColor().getGreen());
+                    obj.put("bc", c.getColor().getBlue());
+                }
+                if(c.getFillColor() != null) {
+                    obj.put("rf", c.getFillColor().getRed());
+                    obj.put("gf", c.getFillColor().getGreen());
+                    obj.put("bf", c.getFillColor().getBlue());
+                }
+                 else {
+                    obj.put("rf", 1000);
+                    obj.put("gf", 1000);
+                    obj.put("bf", 1000);
+                }
+            }
+            else if (shape instanceof Triangle) {
+                Triangle c = (Triangle) shape;
+                obj.put("shapetype", "triangle");
+                obj.put("x1",(int) c.getPosition().x);
+                obj.put("y1",(int) c.getPosition().y);
+                obj.put("x2",(int) c.getPoint2().x);
+                obj.put("y2",(int) c.getPoint2().y);
+                obj.put("x3",(int) c.getPoint3().x);
+                obj.put("y3",(int) c.getPoint3().y);
+                if(c.getColor() != null) {
+                    obj.put("rc", c.getColor().getRed());
+                    obj.put("gc", c.getColor().getGreen());
+                    obj.put("bc", c.getColor().getBlue());
+                }
+                if(c.getFillColor() != null) {
+                    obj.put("rf", c.getFillColor().getRed());
+                    obj.put("gf", c.getFillColor().getGreen());
+                    obj.put("bf", c.getFillColor().getBlue());
+                }
+                else {
+                    obj.put("rf", 1000);
+                    obj.put("gf", 1000);
+                    obj.put("bf", 1000);
+                }
+            }
+            x.add(obj);
+        }
+        PrintWriter pw = new PrintWriter(new File(filename));
+        pw.print(x);
+        pw.close();
+
+    }
+    
+    private void load(String absolutePath) throws FileNotFoundException, IOException, ParseException {
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(new FileReader(absolutePath));
+        JSONArray shapes = (JSONArray) obj;
+        this.engine.Shapes.clear();
+        this.jComboBox1.removeAllItems();
+        for (int i = 0; i < shapes.size(); i++) {
+            JSONObject j = (JSONObject) shapes.get(i);
+            System.out.println(j.get("shapetype"));
+            if (j.get("shapetype").equals("rectangle")) {
+                int x = Integer.parseInt((j.get("x")).toString());
+                int y = Integer.parseInt((j.get("y")).toString());
+                int w = Integer.parseInt((j.get("width")).toString());
+                int h = Integer.parseInt((j.get("height")).toString());
+                int rc = Integer.parseInt((j.get("rc")).toString());
+                int gc = Integer.parseInt((j.get("gc")).toString());
+                int bc = Integer.parseInt((j.get("bc")).toString());
+                int rf = Integer.parseInt((j.get("rf")).toString());
+                int gf = Integer.parseInt((j.get("gf")).toString());
+                int bf = Integer.parseInt((j.get("bf")).toString());
+
+                Rectangle r = new Rectangle(new Point(x,y),w,h);
+                Color borderColor = new Color(rc,gc,bc);
+                r.setColor(borderColor);
+                Color fillColor ;
+                if(rf == 1000 || gf == 1000 || bf == 1000){
+                    fillColor = null;
+                }
+                else {
+                    fillColor = new Color(rf,gf,bf);
+                }
+                r.setFillColor(fillColor);
+                this.engine.Shapes.add(r);
+                 String rectangleName;
+                if(w == h){
+                    rectangleName = "square" + this.numberOfSquares;
+                    numberOfSquares++;
+                }
+                else {
+                    rectangleName  = "rectangle" + this.numberOfRectangles;
+                    numberOfRectangles++;
+                }
+                this.jComboBox1.addItem(rectangleName);
+                this.engine.refresh(canvas1.getGraphics());
+            }
+            
+            else if(j.get("shapetype").equals("line")) {
+                int x1 = Integer.parseInt((j.get("x1")).toString());
+                int y1 = Integer.parseInt((j.get("y1")).toString());
+                int x2 = Integer.parseInt((j.get("x2")).toString());
+                int y2 = Integer.parseInt((j.get("y2")).toString());
+                int rc = Integer.parseInt((j.get("rc")).toString());
+                int gc = Integer.parseInt((j.get("gc")).toString());
+                int bc = Integer.parseInt((j.get("bc")).toString());
+                LineSegment line = new LineSegment(new Point(x1,y1), new Point(x2,y2)); 
+                Color borderColor = new Color(rc,gc,bc);
+                line.setColor(borderColor);
+                this.engine.addShape(line);
+                String lineName = "line" + this.numberOfLines;
+                this.jComboBox1.addItem(lineName);
+                this.numberOfLines++;
+                this.engine.refresh(canvas1.getGraphics()); 
+            }
+            
+            else if(j.get("shapetype").equals("circle")) {
+                int x1 = Integer.parseInt((j.get("x")).toString());
+                int y1 = Integer.parseInt((j.get("y")).toString());
+                int rh = Integer.parseInt((j.get("raduish")).toString());
+                int rv = Integer.parseInt((j.get("raduisv")).toString());
+                int rc = Integer.parseInt((j.get("rc")).toString());
+                int gc = Integer.parseInt((j.get("gc")).toString());
+                int bc = Integer.parseInt((j.get("bc")).toString());
+                int rf = Integer.parseInt((j.get("rf")).toString());
+                int gf = Integer.parseInt((j.get("gf")).toString());
+                int bf = Integer.parseInt((j.get("bf")).toString());
+
+                Circle c = new Circle(rv,rh,new Point(x1,y1));  
+                Color borderColor = new Color(rc,gc,bc);
+                c.setColor(borderColor);
+                Color fillColor;
+                if(rf == 1000 || gf == 1000 || bf == 1000){
+                    fillColor = null;
+                }
+                else {
+                    fillColor = new Color(rf,gf,bf);
+                }
+                c.setFillColor(fillColor);
+                this.engine.addShape(c);
+                String Name;
+                if(rh == rv){
+                    Name = "circle" + this.numberOfCircles;
+                    numberOfCircles++;
+                }
+                else {
+                    Name = "oval" + this.numberOfOvals;
+                    numberOfOvals++;
+                }                 
+                this.jComboBox1.addItem(Name);
+                this.engine.refresh(canvas1.getGraphics()); 
+            }
+            
+            else if(j.get("shapetype").equals("triangle")) {
+                int x1 = Integer.parseInt((j.get("x1")).toString());
+                int y1 = Integer.parseInt((j.get("y1")).toString());
+                int x2 = Integer.parseInt((j.get("x2")).toString());
+                int y2 = Integer.parseInt((j.get("y2")).toString());
+                int x3 = Integer.parseInt((j.get("x3")).toString());
+                int y3 = Integer.parseInt((j.get("y3")).toString());
+                int rc = Integer.parseInt((j.get("rc")).toString());
+                int gc = Integer.parseInt((j.get("gc")).toString());
+                int bc = Integer.parseInt((j.get("bc")).toString());
+                int rf = Integer.parseInt((j.get("rf")).toString());
+                int gf = Integer.parseInt((j.get("gf")).toString());
+                int bf = Integer.parseInt((j.get("bf")).toString());
+                
+                Triangle t = new Triangle(new Point(x1,y1), new Point(x2,y2),new Point(x3,y3)); 
+                Color borderColor = new Color(rc,gc,bc);
+                t.setColor(borderColor);
+                Color fillColor;
+                 if(rf == 1000 || gf == 1000 || bf == 1000){
+                    fillColor = null;
+                }
+                else {
+                    fillColor = new Color(rf,gf,bf);
+                }
+                t.setFillColor(fillColor);
+                this.engine.addShape(t);
+                String lineName = "triangle" + this.numberOfTriangles;
+                this.jComboBox1.addItem(lineName);
+                this.numberOfTriangles++;
+                this.engine.refresh(canvas1.getGraphics()); 
+            }
+        }
+    }    
+
+    
+    private void loadbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadbtnActionPerformed
+        // TODO add your handling code here:
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Specify a file to load");
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        FileFilter filter = new FileNameExtensionFilter("json file", new String[]{"json"});
+        fileChooser.setFileFilter(filter);
+        int userSelection = fileChooser.showOpenDialog(this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            System.out.println("Save as file: " + fileToSave.getAbsolutePath());
+            try {
+                load(fileToSave.getAbsolutePath());
+            } catch (IOException ex) {
+                System.out.println("enteredexp1");
+            } catch (ParseException ex) {
+                System.out.println("enteredexp2");
+            }
+        }        
+    }//GEN-LAST:event_loadbtnActionPerformed
+
+    private void copyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyActionPerformed
+        // TODO add your handling code here:
+        this.copy();
+    }//GEN-LAST:event_copyActionPerformed
+
+    private void circleBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_circleBtn1ActionPerformed
+        // TODO add your handling code here:
+        if (oval == null) {
+            oval = new OvalWindow(this.canvas1, this.jComboBox1, this.engine);
+            oval.setParentNode(this);
+        }
+
+        oval.setVisible(true);
+        
+    }//GEN-LAST:event_circleBtn1ActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+//    public static void main(String args[]) {
+//        
+//        try {
+//            UIManager.setLookAndFeel(new FlatDarkLaf());
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+////        try {
+////            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+////                if ("Nimbus".equals(info.getName())) {
+////                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+////                    break;
+////                }
+////            }
+////        } catch (ClassNotFoundException ex) {
+////            java.util.logging.Logger.getLogger(Paint.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+////        } catch (InstantiationException ex) {
+////            java.util.logging.Logger.getLogger(Paint.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+////        } catch (IllegalAccessException ex) {
+////            java.util.logging.Logger.getLogger(Paint.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+////        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+////            java.util.logging.Logger.getLogger(Paint.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+////        }
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new Paint().setVisible(true);
+//            }
+//        });
+//    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private java.awt.Canvas canvas1;
+    private javax.swing.JButton circleBtn;
+    private javax.swing.JButton circleBtn1;
+    private javax.swing.JButton clearBtn;
+    private javax.swing.JButton colorize;
+    private javax.swing.JButton copy;
+    private javax.swing.JButton delete;
+    private javax.swing.JButton fillBtn;
+    private javax.swing.JButton hideBtn;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JButton lineBtn;
+    private javax.swing.JMenuItem loadbtn;
+    private javax.swing.JButton rectangleBtn;
+    private javax.swing.JMenuItem savebtn;
+    private javax.swing.JButton showNamesbtn;
+    private javax.swing.JButton triangleBtn;
+    private javax.swing.JButton unfillBtn;
+    // End of variables declaration//GEN-END:variables
+
+}
